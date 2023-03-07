@@ -1,7 +1,5 @@
 {
   "redirects": [{ "source": "/", "destination": "/api" }]
-}
-{
   "name": "vercel-python-api",
   "version": "1.0.0",
   "main": "index.js",
