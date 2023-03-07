@@ -1,20 +1,11 @@
 from http.server import BaseHTTPRequestHandler
-import sys
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+import numpy as np
+
 
 class handler(BaseHTTPRequestHandler):
-
-def window():
-   app = QApplication(sys.argv)
-   w = QWidget()
-   b = QLabel(w)
-   b.setText("Hello World!")
-   w.setGeometry(100,100,200,50)
-   b.move(50,20)
-   w.setWindowTitle("PyQt5")
-   w.show()
-   sys.exit(app.exec_())
-if __name__ == '__main__':
-   window()
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(str(np.random.choice([1, 2, 3, 4, 5, 6])).encode())
+        return
