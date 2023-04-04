@@ -1,3 +1,14 @@
 {
-  "redirects": [{ "source": "/", "destination": "/api" }]
+  "builds": [
+    {
+      "src": "Dockerfile",
+      "use": "@vercel/docker"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/grayscale",
+      "methods": ["POST"]
+    }
+  ]
 }
