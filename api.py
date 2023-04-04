@@ -1,15 +1,24 @@
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, UploadFile
-from starlette.responses import StreamingResponse
+from PIL import Image
+from io import BytesIO
+from urllib.request import urlopen
+from fastapi import FastAPI
+from fastapi import UploadFile
 
 app = FastAPI()
 
 @app.post("/grayscale")
-async def grayscale(file: UploadFile):
-    contents = await file.read()
-    np_image = np.fromstring(contents, np.uint8)
-    image = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    buffer = cv2.imencode('.jpg', gray_image)[1].tobytes()
-    return StreamingResponse(BytesIO(buffer), media_type="image/jpeg")
+async def grayscale(image: UploadFile):
+    # Leer la imagen del archivo subido
+    img = Image.open(BytesIO(await image.read()))
+    
+    # Convertir la imagen a escala de grises
+    img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+    
+    # Guardar la imagen en un archivo temporal
+    temp_file = BytesIO()
+    Image.fromarray(img).save(temp_file, format='PNG')
+    temp_file.seek(0)
+    
+    return temp_file
