@@ -1,1 +1,4 @@
-opencv-python-headless==4.5.5.62
+numpy
+opencv-python-headless
+fastapi
+uvicorn
