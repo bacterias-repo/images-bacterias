@@ -1,25 +1,32 @@
+import io
 import cv2
 import numpy as np
-from PIL import Image
-from io import BytesIO
-from urllib.request import urlopen
-from fastapi import FastAPI
-from fastapi import UploadFile
+from fastapi import FastAPI, File, UploadFile, Header
+from github import Github
 
 app = FastAPI()
 
-@app.post("/grayscale")
-async def grayscale(image: UploadFile):
-    # Leer la imagen del archivo subido
-    img = Image.open(BytesIO(await image.read()))
+g = Github("<tu-token>")
+
+@app.post("/convert_image")
+async def convert_image(file: UploadFile = File(...), api_key: str = Header(None)):
+    if api_key != "<tu-api-key>":
+        return {"error": "API Key inválida"}
     
-    # Convertir la imagen a escala de grises
-    img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+    # Obtener el contenido de la imagen en bytes
+    file_contents = await file.read()
     
-    # Guardar la imagen en un archivo temporal
-    temp_file = BytesIO()
-    Image.fromarray(img).save(temp_file, format='PNG')
-    temp_file.seek(0)
+    # Convertir los bytes en un array de numpy
+    nparr = np.fromstring(file_contents, np.uint8)
     
-    return temp_file
+    # Leer la imagen usando OpenCV y convertirla a escala de grises
+    img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
+    
+    # Guardar la imagen en GitHub
+    repo = g.get_repo("<tu-repositorio>")
+    contents = file.file.read()
+    repo.create_file("grayscale_image.jpg", "commit message", contents)
+    
+    # Devolver la imagen en escala de grises
+    return {"image": img.tolist()}
 
