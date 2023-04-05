@@ -23,7 +23,7 @@ async def convert_image(file: UploadFile = File(...), api_key: str = Header(None
     img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
     
     # Guardar la imagen en GitHub
-    repo = g.get_repo("https://github.com/bacterias-repo/grises_hub")
+    repo = g.get_repo("https://github.com/bacterias-repo/images-bacterias")
     contents = file.file.read()
     repo.create_file("grayscale_image.jpg", "commit message", contents)
     
