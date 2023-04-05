@@ -10,7 +10,7 @@ g = Github("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")
 
 @app.post("/convert_image")
 async def convert_image(file: UploadFile = File(...), api_key: str = Header(None)):
-    if api_key != "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":
+    if api_key != "snW2pk2zJ7FMeNgpS2sczi39":
         return {"error": "API Key inválida"}
     
     # Obtener el contenido de la imagen en bytes
