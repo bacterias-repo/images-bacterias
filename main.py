@@ -6,11 +6,11 @@ from github import Github
 
 app = FastAPI()
 
-g = Github("<tu-token>")
+g = Github("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")
 
 @app.post("/convert_image")
 async def convert_image(file: UploadFile = File(...), api_key: str = Header(None)):
-    if api_key != "<tu-api-key>":
+    if api_key != "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":
         return {"error": "API Key inválida"}
     
     # Obtener el contenido de la imagen en bytes
@@ -23,7 +23,7 @@ async def convert_image(file: UploadFile = File(...), api_key: str = Header(None
     img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
     
     # Guardar la imagen en GitHub
-    repo = g.get_repo("<tu-repositorio>")
+    repo = g.get_repo("https://github.com/bacterias-repo/grises_hub")
     contents = file.file.read()
     repo.create_file("grayscale_image.jpg", "commit message", contents)
     
