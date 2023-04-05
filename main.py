@@ -1,32 +1,37 @@
-import io
 import cv2
-import numpy as np
-from fastapi import FastAPI, File, UploadFile, Header
-from github import Github
+import requests
+import git
+from git import Repo
+from io import BytesIO
+from typing import Optional
+from fastapi import FastAPI, File, UploadFile
 
 app = FastAPI()
 
-g = Github("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")
-
 @app.post("/convert_image")
-async def convert_image(file: UploadFile = File(...), api_key: str = Header(None)):
-    if api_key != "snW2pk2zJ7FMeNgpS2sczi39":
-        return {"error": "API Key inválida"}
+async def convert_image(file: UploadFile = File(...), github_token: str = ""):
+    # Descargar la imagen del archivo subido
+    contents = await file.read()
+    img = cv2.imdecode(np.fromstring(contents, np.uint8), cv2.IMREAD_COLOR)
     
-    # Obtener el contenido de la imagen en bytes
-    file_contents = await file.read()
+    # Convertir la imagen a escala de grises
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    # Convertir los bytes en un array de numpy
-    nparr = np.fromstring(file_contents, np.uint8)
+    # Escribir la imagen en BytesIO
+    buffer = BytesIO()
+    cv2.imwrite(buffer, gray_img, [cv2.IMWRITE_JPEG_QUALITY, 90])
+    buffer.seek(0)
     
-    # Leer la imagen usando OpenCV y convertirla a escala de grises
-    img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
+    # Guardar la imagen procesada en GitHub
+    try:
+        repo = Repo.clone_from("https://github.com/bacterias-repo/images-bacterias.git", "/home/arturo/Documents/PROYECTOS/LAB_RAMOS/Codigos/APIS/vercel_prueba2")
+        file_path = "images-bacterias/imagengris.jpg"
+        with open(file_path, 'wb') as f:
+            f.write(buffer.getvalue())
+        repo.index.add([file_path])
+        repo.index.commit("Add processed image")
+        repo.remotes.origin.push()
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
     
-    # Guardar la imagen en GitHub
-    repo = g.get_repo("https://github.com/bacterias-repo/images-bacterias")
-    contents = file.file.read()
-    repo.create_file("grayscale_image.jpg", "commit message", contents)
-    
-    # Devolver la imagen en escala de grises
-    return {"image": img.tolist()}
-
+    return {"status": "success", "message": "Image processed and saved successfully."}
