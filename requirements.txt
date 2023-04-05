@@ -1,5 +1,5 @@
 numpy
-opencv-python-headless==4.5.5.62
+opencv-python-headless
 fastapi
+pygithub
 uvicorn
-pillow
