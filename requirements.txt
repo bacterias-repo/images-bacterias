@@ -1,6 +1,0 @@
-numpy
-os
-opencv-python-headless
-fastapi
-uvicorn
-PyGithub
