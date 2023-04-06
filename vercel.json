@@ -1,0 +1,10 @@
+{
+  "routes": [
+    { "src": "/convert", "dest": "/api.py" }
+  ],
+  "builds": {
+    "env": {
+      "GITHUB_TOKEN": "<tu_github_token>"
+    }
+  }
+}
