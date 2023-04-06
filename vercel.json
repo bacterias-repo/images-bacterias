@@ -4,7 +4,7 @@
   ],
   "builds": {
     "env": {
-      "GITHUB_TOKEN": "<tu_github_token>"
+      "GITHUB_TOKEN": "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"
     }
   }
 }
