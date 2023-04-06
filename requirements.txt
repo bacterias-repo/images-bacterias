@@ -1,6 +1,6 @@
 numpy
+os
 opencv-python-headless
 fastapi
-pygithub
 uvicorn
-gitpython
+PyGithub
